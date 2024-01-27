@@ -17,11 +17,16 @@ function Square({ value, onSquareClick }) {
   );
 }
 
+// This is the function that is responsible for handling proper display and functionality of the whole board
 function Board({ xIsNext, squares, onPlay }) {
+
+  // This is a function that implements functionality of a click to a Square on the board
   function handleClick(i) {
+    // The IF statement checks if there are available squares to play and whether either of player have already won.
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
+    // A shallow copy of the 'squares' array
     const nextSquares = squares.slice();
     if (xIsNext) {
       nextSquares[i] = 'X';
@@ -31,6 +36,7 @@ function Board({ xIsNext, squares, onPlay }) {
     onPlay(nextSquares);
   }
 
+  // Checking if there is a winner or if the game should be continued with the next player.
   const winner = calculateWinner(squares);
   let status;
   if (winner) {
@@ -40,6 +46,7 @@ function Board({ xIsNext, squares, onPlay }) {
   }
 
   return (
+      // This part returns the html element to be rendered on the page
       <>
         <div className="status">{status}</div>
         <div className="board-row">
@@ -61,18 +68,22 @@ function Board({ xIsNext, squares, onPlay }) {
   );
 }
 
+// This is the main function that contains the whole game data
 export default function Game() {
+  // Declaration of the state variables and methods that set their values
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const [currentMove, setCurrentMove] = useState(0);
   const xIsNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
 
+  // Updating the field and values after a turn
   function handlePlay(nextSquares) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
     setHistory(nextHistory);
     setCurrentMove(nextHistory.length - 1);
   }
 
+  // Function that lets the player review previous turns
   function jumpTo(nextMove) {
     setCurrentMove(nextMove);
   }
@@ -84,6 +95,7 @@ export default function Game() {
     } else {
       description = 'Go to game start';
     }
+    // This function shows previous moves
     return (
         <li key={move}>
           <button onClick={() => jumpTo(move)}>{description}</button>
@@ -92,6 +104,7 @@ export default function Game() {
   });
 
   return (
+      // Render of the whole game board
       <div className="game">
         <div className="game-board">
           <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
@@ -103,6 +116,7 @@ export default function Game() {
   );
 }
 
+// This function is to calculate if there is a winner at the moment
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2],
@@ -114,6 +128,7 @@ function calculateWinner(squares) {
     [0, 4, 8],
     [2, 4, 6],
   ];
+  // Checking the board value for the winner
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
